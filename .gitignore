@@ -1,4 +1,3 @@
-
 target/
 
 ### STS ###
@@ -26,8 +25,8 @@ nbdist/
 ### Removed from public ###
 *.db
 logs/
-files/
 HELP.md
 mvnw
 mvnw.cmd
 .mvn
+db/
