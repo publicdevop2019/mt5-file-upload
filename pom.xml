@@ -15,9 +15,6 @@
         <relativePath>./shared/parent-pom.xml</relativePath>
     </parent>
 
-    <dependencies>
-    </dependencies>
-
     <build>
         <finalName>FileUpload</finalName>
     </build>
