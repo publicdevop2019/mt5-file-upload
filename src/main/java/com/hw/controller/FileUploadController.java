@@ -16,8 +16,8 @@ public class FileUploadController {
     FileUploadServiceImpl fileStorageService;
 
     @GetMapping("files/{fileId}")
-    public ResponseEntity<byte[]> getUploadedFileById(@PathVariable(name = "fileId") Long profileId) {
-        return fileStorageService.getUploadedFileById(profileId);
+    public ResponseEntity<byte[]> getUploadedFileById(@PathVariable(name = "fileId") Long fileId) {
+        return fileStorageService.getUploadedFileById(fileId);
     }
 
     @PostMapping("files")
