@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
-@RequestMapping(path = "v1/api", produces = "application/pdf")
+@RequestMapping(produces = "application/pdf")
 public class FileUploadController {
 
     @Autowired
