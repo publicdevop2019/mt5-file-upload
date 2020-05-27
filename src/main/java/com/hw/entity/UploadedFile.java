@@ -1,21 +1,19 @@
 package com.hw.entity;
 
 import com.hw.shared.Auditable;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@Table(name = "UploadedFile")
-@SequenceGenerator(name = "uploadedFileId_gen", sequenceName = "uploadedFileId_gen", initialValue = 100)
+@Table(name = "uploaded_file")
 @Data
 public class UploadedFile extends Auditable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "uploadedFileId_gen")
-    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column

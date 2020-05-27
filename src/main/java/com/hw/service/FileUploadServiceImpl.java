@@ -3,6 +3,7 @@ package com.hw.service;
 import com.hw.entity.UploadedFile;
 import com.hw.repo.UploadedFileRepo;
 import com.hw.shared.BadRequestException;
+import com.hw.shared.IdGenerator;
 import com.hw.shared.InternalServerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @Slf4j
@@ -33,6 +33,9 @@ public class FileUploadServiceImpl {
 
     @Value("${allowed.size}")
     Integer allowedSize;
+
+    @Autowired
+    private IdGenerator idGenerator;
 
     public ResponseEntity<byte[]> getUploadedFileById(Long profileId) {
         Optional<UploadedFile> findById = uploadedFileRepo.findById(profileId);
@@ -55,10 +58,10 @@ public class FileUploadServiceImpl {
     public String uploadedFiles(MultipartFile file) {
         validateUploadCriteria(file);
         UploadedFile uploadedFile = new UploadedFile();
-        UploadedFile draft = uploadedFileRepo.save(uploadedFile);
-        draft.setContentType(file.getContentType());
-        draft.setOriginalName(file.getOriginalFilename());
-        String path = "files/" + draft.getId().toString() + ".upload";
+        uploadedFile.setId(idGenerator.getId());
+        uploadedFile.setContentType(file.getContentType());
+        uploadedFile.setOriginalName(file.getOriginalFilename());
+        String path = "files/" + uploadedFile.getId().toString() + ".upload";
         File targetFile = new File(path);
         File dir = new File("files");
         if (!dir.exists()) {
@@ -74,9 +77,9 @@ public class FileUploadServiceImpl {
             log.error("error during saving file", e);
             throw new InternalServerException("error during saving file");
         }
-        draft.setSystemPath(path);
-        uploadedFileRepo.save(draft);
-        return draft.getId().toString();
+        uploadedFile.setSystemPath(path);
+        uploadedFileRepo.save(uploadedFile);
+        return uploadedFile.getId().toString();
     }
 
     /**
