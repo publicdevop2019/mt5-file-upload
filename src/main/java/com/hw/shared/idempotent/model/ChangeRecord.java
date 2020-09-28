@@ -16,27 +16,28 @@ import java.util.ArrayList;
 @Data
 @NoArgsConstructor
 public class ChangeRecord extends Auditable implements IdBasedEntity {
+    public static final String CHANGE_ID = "changeId";
+    public static final String ENTITY_TYPE = "entityType";
     @Id
     private Long id;
-
     @Column(nullable = false)
     private String changeId;
-    public static final String CHANGE_ID = "changeId";
     @Column(nullable = false)
     private String entityType;
-    public static final String ENTITY_TYPE = "entityType";
     @Column(nullable = false)
     private String serviceBeanName;
 
     @Column(length = 100000)
     private ArrayList<PatchCommand> patchCommands;
 
+    @Lob
+    @Column(columnDefinition = "BLOB")
+    //@Convert(converter = CustomByteArraySerializer.class)
+    // not using converter due to lazy load , no session error
+    private byte[] replacedVersion;
+    private ArrayList<Long> deletedIds;
     private OperationType operationType;
     private String query;
-
-    public static ChangeRecord create(Long id, AppCreateChangeRecordCommand command) {
-        return new ChangeRecord(id, command);
-    }
 
     private ChangeRecord(Long id, AppCreateChangeRecordCommand command) {
         this.id = id;
@@ -46,5 +47,12 @@ public class ChangeRecord extends Auditable implements IdBasedEntity {
         this.patchCommands = command.getPatchCommands();
         this.operationType = command.getOperationType();
         this.query = command.getQuery();
+        this.replacedVersion = CustomByteArraySerializer.convertToDatabaseColumn(command.getReplacedVersion());
+        if (command.getDeletedIds() != null)
+            this.deletedIds = new ArrayList<>(command.getDeletedIds());
+    }
+
+    public static ChangeRecord create(Long id, AppCreateChangeRecordCommand command) {
+        return new ChangeRecord(id, command);
     }
 }
