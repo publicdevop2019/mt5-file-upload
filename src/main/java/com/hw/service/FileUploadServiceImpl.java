@@ -1,10 +1,12 @@
 package com.hw.service;
 
 import com.hw.entity.UploadedFile;
+import com.hw.exception.FileSizeException;
+import com.hw.exception.FileTypeException;
+import com.hw.exception.FileUploadException;
 import com.hw.repo.UploadedFileRepo;
-import com.hw.shared.BadRequestException;
 import com.hw.shared.IdGenerator;
-import com.hw.shared.InternalServerException;
+import com.hw.shared.rest.exception.EntityNotExistException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +42,7 @@ public class FileUploadServiceImpl {
     public ResponseEntity<byte[]> getUploadedFileById(Long profileId) {
         Optional<UploadedFile> findById = uploadedFileRepo.findById(profileId);
         if (findById.isEmpty())
-            throw new BadRequestException("file not found");
+            throw new EntityNotExistException();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("content-type",
                 findById.get().getContentType());
@@ -73,9 +75,8 @@ public class FileUploadServiceImpl {
             outStream = new FileOutputStream(targetFile, false);
             outStream.write((file.getBytes()));
         } catch (IOException e) {
-            e.printStackTrace();
             log.error("error during saving file", e);
-            throw new InternalServerException("error during saving file");
+            throw new FileUploadException();
         }
         uploadedFile.setSystemPath(path);
         uploadedFileRepo.save(uploadedFile);
@@ -87,10 +88,10 @@ public class FileUploadServiceImpl {
      */
     private void validateUploadCriteria(MultipartFile file) {
         if (allowedTypes.stream().noneMatch(e -> e.equals(file.getContentType())))
-            throw new BadRequestException("file type not allowed");
+            throw new FileTypeException();
         try {
             if (file.getBytes().length > allowedSize)
-                throw new BadRequestException("file size not allowed");
+                throw new FileSizeException();
         } catch (IOException e) {
             e.printStackTrace();
         }
