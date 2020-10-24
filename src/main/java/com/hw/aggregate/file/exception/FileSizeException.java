@@ -1,4 +1,4 @@
-package com.hw.exception;
+package com.hw.aggregate.file.exception;
 
 public class FileSizeException extends RuntimeException{
 }

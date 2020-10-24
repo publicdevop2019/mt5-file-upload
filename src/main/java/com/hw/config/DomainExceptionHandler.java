@@ -1,8 +1,8 @@
 package com.hw.config;
 
-import com.hw.exception.FileSizeException;
-import com.hw.exception.FileTypeException;
-import com.hw.exception.FileUploadException;
+import com.hw.aggregate.file.exception.FileSizeException;
+import com.hw.aggregate.file.exception.FileTypeException;
+import com.hw.aggregate.file.exception.FileUploadException;
 import com.hw.shared.ErrorMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -23,8 +23,8 @@ import static com.hw.shared.AppConstant.HTTP_HEADER_ERROR_ID;
 public class DomainExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = {
-            FileUploadException.class,
             FileTypeException.class,
+            FileSizeException.class
     })
     protected ResponseEntity<Object> handle400Exception(RuntimeException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(ex);
@@ -34,7 +34,7 @@ public class DomainExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = {
-            FileSizeException.class
+            FileUploadException.class,
     })
     protected ResponseEntity<Object> handle500Exception(RuntimeException ex, WebRequest request) {
         ErrorMessage errorMessage = new ErrorMessage(ex);

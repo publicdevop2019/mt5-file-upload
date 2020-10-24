@@ -1,12 +1,15 @@
 package com.hw.shared.idempotent.model;
 
 import com.hw.shared.idempotent.exception.CustomByteArraySerializationException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 
 public class CustomByteArraySerializer {
     public static byte[] convertToDatabaseColumn(Object o) {
         if (o == null)
+            return null;
+        if (o instanceof MultipartFile)
             return null;
         try (
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
