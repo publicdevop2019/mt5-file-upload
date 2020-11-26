@@ -4,17 +4,15 @@ import com.hw.aggregate.file.exception.FileSizeException;
 import com.hw.aggregate.file.exception.FileTypeException;
 import com.hw.aggregate.file.exception.FileUploadException;
 import com.hw.shared.Auditable;
-import com.hw.shared.rest.IdBasedEntity;
+import com.hw.shared.rest.Aggregate;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,7 +24,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Slf4j
-public class UploadedFile extends Auditable implements IdBasedEntity {
+public class UploadedFile extends Auditable implements Aggregate {
 
     @Id
     private Long id;
@@ -39,13 +37,16 @@ public class UploadedFile extends Auditable implements IdBasedEntity {
 
     @Column
     private String contentType;
+    @Version
+    @Setter(AccessLevel.NONE)
+    private Integer version;
 
     public static UploadedFile create(long id, MultipartFile command, Integer allowedSize, List<String> allowedTypes) {
-        return new UploadedFile(id, command,allowedSize,allowedTypes);
+        return new UploadedFile(id, command, allowedSize, allowedTypes);
     }
 
     public UploadedFile(Long id, MultipartFile file, Integer allowedSize, List<String> allowedTypes) {
-        validateUploadCriteria(file,allowedSize,allowedTypes);
+        validateUploadCriteria(file, allowedSize, allowedTypes);
         String path = "files/" + id + ".upload";
         this.id = id;
         this.contentType = file.getContentType();
