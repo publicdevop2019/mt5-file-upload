@@ -7,7 +7,6 @@
     <version>0.0.0a</version>
     <packaging>jar</packaging>
 
-    <name>FileUpload</name>
     <parent>
         <groupId>com.hw</groupId>
         <artifactId>config-center</artifactId>
@@ -18,6 +17,4 @@
     <build>
         <finalName>FileUpload</finalName>
     </build>
-
-
 </project>
